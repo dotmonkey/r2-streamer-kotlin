@@ -43,7 +43,7 @@ class NavigationDocumentParser {
 
         return tableOfContents
     }
-
+    fun tableOfContent(document: XmlParser) = nodeArray(document, "toc")
     fun pageList(document: XmlParser) = nodeArray(document, "page-list")
     fun landmarks(document: XmlParser) = nodeArray(document, "landmarks")
     fun listOfIllustrations(document: XmlParser) = nodeArray(document, "loi")
@@ -82,7 +82,7 @@ class NavigationDocumentParser {
         val title = (aNode.getFirst("span"))?.text ?: aNode.text ?: aNode.name
         newLiNode.href = normalize(navigationDocumentPath, aNode.attributes["href"])
         newLiNode.title = title
-        element.getFirst("ol")?.let { newLiNode.children.add(nodeOl(it)) }
+        element.getFirst("ol")?.let { newLiNode.children.plusAssign(nodeOl(it).children) }
         return newLiNode
     }
 

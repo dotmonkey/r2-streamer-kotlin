@@ -185,6 +185,7 @@ class EpubParser : PublicationParser {
 
         langTypeLoop@ for (lang in publication.metadata.languages) {
             when (lang) {
+	    	"zh-TW","zh-CN",
                 "zh", "ja", "ko" -> {
                     langType = LangType.cjk
                     break@langTypeLoop
@@ -271,7 +272,7 @@ class EpubParser : PublicationParser {
         }
 
         ndp.navigationDocumentPath = navLink.href ?: return
-        publication.tableOfContents.plusAssign(ndp.tableOfContent(navByteArray))
+        publication.tableOfContents.plusAssign(ndp.tableOfContent(navDocument))
         publication.landmarks.plusAssign(ndp.landmarks(navDocument))
         publication.listOfAudioFiles.plusAssign(ndp.listOfAudiofiles(navDocument))
         publication.listOfIllustrations.plusAssign(ndp.listOfIllustrations(navDocument))

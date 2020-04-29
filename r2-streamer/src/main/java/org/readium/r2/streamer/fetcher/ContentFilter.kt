@@ -27,6 +27,13 @@ interface ContentFilters {
     }
 }
 
+object EpubInjectInfo{
+    val cssBefore = mutableListOf<String>()
+    val cssDefault = mutableListOf<String>()
+    val cssAfter = mutableListOf<String>()
+
+    val scripts = mutableListOf<String>()
+}
 class ContentFiltersEpub(private val userPropertiesPath: String?, private var customResources: Resources?) : ContentFilters {
 
     override fun apply(input: InputStream, publication: Publication, container: Container, path: String): InputStream {
@@ -88,10 +95,25 @@ class ContentFiltersEpub(private val userPropertiesPath: String?, private var cu
         beginIncludes.add("<meta name=\"viewport\" content=\"width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0\" />")
 
         beginIncludes.add(getHtmlLink("/"+ Injectable.Style.rawValue +"/$cssStyle-before.css"))
+        for(s in EpubInjectInfo.cssBefore){
+            beginIncludes.add(getHtmlLink(s))
+        }
+
         beginIncludes.add(getHtmlLink("/"+ Injectable.Style.rawValue +"/$cssStyle-default.css"))
+        for(s in EpubInjectInfo.cssDefault){
+            beginIncludes.add(getHtmlLink(s))
+        }
+
         endIncludes.add(getHtmlLink("/"+ Injectable.Style.rawValue +"/$cssStyle-after.css"))
+        for(s in EpubInjectInfo.cssAfter){
+            endIncludes.add(getHtmlLink(s))
+        }
+
         endIncludes.add(getHtmlScript("/"+ Injectable.Script.rawValue +"/touchHandling.js"))
         endIncludes.add(getHtmlScript("/"+ Injectable.Script.rawValue +"/utils.js"))
+        for(s in EpubInjectInfo.scripts){
+            endIncludes.add(getHtmlScript(s))
+        }
 
         customResources?.let {
             // Inject all custom resourses
