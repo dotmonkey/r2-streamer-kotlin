@@ -13,10 +13,7 @@ import org.readium.r2.shared.*
 import org.readium.r2.shared.drm.DRM
 import org.readium.r2.shared.parser.xml.XmlParser
 import org.readium.r2.streamer.BuildConfig.DEBUG
-import org.readium.r2.streamer.container.ArchiveContainer
-import org.readium.r2.streamer.container.Container
-import org.readium.r2.streamer.container.ContainerError
-import org.readium.r2.streamer.container.DirectoryContainer
+import org.readium.r2.streamer.container.*
 import org.readium.r2.streamer.parser.PubBox
 import org.readium.r2.streamer.parser.PublicationParser
 import timber.log.Timber
@@ -95,6 +92,9 @@ class EpubParser : PublicationParser {
     private val encp = EncryptionParser()
 
     private fun generateContainerFrom(path: String): Container {
+        if(path.startsWith("epub://")){
+            return HttpContainer(path.replace("epub://","http://"), RootFile())
+        }
         if (!File(path).exists())
             throw ContainerError.missingFile(path)
 
