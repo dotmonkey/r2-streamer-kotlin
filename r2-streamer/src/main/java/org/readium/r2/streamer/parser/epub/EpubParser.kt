@@ -185,7 +185,7 @@ class EpubParser : PublicationParser {
 
         langTypeLoop@ for (lang in publication.metadata.languages) {
             when (lang) {
-	    	"zh-TW","zh-CN",
+	    	"zh-TW","zh-CN","ZH-CN","ZH-TW",
                 "zh", "ja", "ko" -> {
                     langType = LangType.cjk
                     break@langTypeLoop
