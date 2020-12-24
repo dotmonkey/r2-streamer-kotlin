@@ -278,6 +278,14 @@ class EpubParser : PublicationParser {
             }
         }
 
+        publication.tableOfContents.clear()
+        publication.landmarks.clear()
+        publication.listOfAudioFiles.clear()
+        publication.listOfIllustrations.clear()
+        publication.listOfTables.clear()
+        publication.listOfVideos.clear()
+        publication.pageList.clear()
+
         ndp.navigationDocumentPath = navLink.href ?: return
         publication.tableOfContents.plusAssign(ndp.tableOfContent(navDocument))
         publication.landmarks.plusAssign(ndp.landmarks(navDocument))
