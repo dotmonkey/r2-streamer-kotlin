@@ -14,6 +14,7 @@ import org.readium.r2.shared.drm.DRM
 import org.readium.r2.shared.parser.xml.XmlParser
 import org.readium.r2.streamer.BuildConfig.DEBUG
 import org.readium.r2.streamer.container.*
+import org.readium.r2.streamer.fetcher.Fetcher
 import org.readium.r2.streamer.parser.PubBox
 import org.readium.r2.streamer.parser.PublicationParser
 import timber.log.Timber
@@ -254,21 +255,27 @@ class EpubParser : PublicationParser {
         }
     }
 
-    private fun parseNavigationDocument(container: Container, publication: Publication) {
+    fun parseNavigationDocument(container: Container, publication: Publication) {
         val navLink = publication.linkWithRel("contents") ?: return
 
-        val navDocument = try {
-            xmlDocumentForResource(navLink, container)
-        } catch (e: Exception) {
-            if (DEBUG) Timber.e(e)
-            return
-        }
-
-        val navByteArray = try {
-            xmlAsByteArray(navLink, container)
-        } catch (e: Exception) {
-            if (DEBUG) Timber.e(e)
-            return
+        val navDocument = if(navLink.isEncrypted()){
+            if(container.drm?.license==null) return
+            var path = navLink.href!!
+            if(path.startsWith('/')){
+                path = path.substring(1)
+            }
+            val fetcher = Fetcher(publication,container,null,null)
+            val d = fetcher.data(path)!!
+            val doc = XmlParser()
+            doc.parseXml(d.inputStream())
+            doc
+        }else{
+            try {
+                xmlDocumentForResource(navLink, container)
+            } catch (e: Exception) {
+                if (DEBUG) Timber.e(e)
+                return
+            }
         }
 
         ndp.navigationDocumentPath = navLink.href ?: return
